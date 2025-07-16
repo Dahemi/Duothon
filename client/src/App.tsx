@@ -12,6 +12,9 @@ import { SignUp } from "./components/SignUp";
 import { LoginPage } from "./components/LoginPage";
 import { Dashboard } from "./components/Dashboard";
 import { ProtectedRoute } from "./components/ProtectedRoute";
+import { AdminLogin } from "./components/AdminLogin";
+import { AdminDashboard } from "./components/AdminDashboard";
+import { AdminProtectedRoute } from "./components/AdminProtectedRoute";
 
 function App() {
   return (
@@ -30,6 +33,18 @@ function App() {
                 </ProtectedRoute>
               }
             />
+
+            {/* Admin Routes */}
+            <Route path="/admin/login" element={<AdminLogin />} />
+            <Route
+              path="/admin/dashboard"
+              element={
+                <AdminProtectedRoute>
+                  <AdminDashboard />
+                </AdminProtectedRoute>
+              }
+            />
+
             {/* Add more protected routes here */}
           </Routes>
         </div>

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Calendar, Clock, Users, Award, Code, Heart, Zap } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+
 export default function Homepage() {
   const [isRegistered, setIsRegistered] = useState(false);
   const navigate = useNavigate();
@@ -11,6 +12,10 @@ export default function Homepage() {
 
   const handleLogin = () => {
     navigate("/login");
+  };
+
+  const handleAdminLogin = () => {
+    navigate("/admin/login");
   };
 
   return (
@@ -45,17 +50,25 @@ export default function Homepage() {
                 FAQ
               </a>
             </nav>
-            <button
-              onClick={handleLogin}
-              className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-6 py-2 rounded-lg font-semibold hover:from-orange-600 hover:to-red-600 transition-all duration-200 transform hover:scale-105"
-            >
-              LOGIN
-            </button>
+            <div className="flex items-center space-x-4">
+              <button
+                onClick={handleLogin}
+                className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-6 py-2 rounded-lg font-semibold hover:from-orange-600 hover:to-red-600 transition-all duration-200 transform hover:scale-105"
+              >
+                LOGIN
+              </button>
+              <button
+                onClick={handleAdminLogin}
+                className="bg-gray-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-gray-700 transition-all duration-200"
+              >
+                ADMIN
+              </button>
+            </div>
           </div>
         </div>
       </header>
 
-      {/* Main Content */}
+      {/* Rest of your existing Homepage component remains the same */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left Side - 3D Blocks */}

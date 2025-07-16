@@ -6,6 +6,7 @@ import path from "path";
 import admin from "firebase-admin";
 import authRoutes from "./routes/auth.routes";
 import teamsRoutes from "./routes/teams.route";
+import adminRoutes from "./routes/admin.routes";
 
 // Load .env file from server directory
 dotenv.config();
@@ -38,6 +39,7 @@ app.get("/", (req, res) => res.send("API Running"));
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/teams", teamsRoutes);
+app.use("/api/admin", adminRoutes);
 
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI;
