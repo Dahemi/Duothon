@@ -1,18 +1,12 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import ChallengePage from './pages/challengePage';
-import BuildathonPage from './pages/buildathon';
-import './App.css';
+import { AdminDashboard } from './components/admin'
+import './App.css'
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Navigate to="/challenge" replace />} />
-        <Route path="/challenge" element={<ChallengePage />} />
-        <Route path="/buildathon" element={<BuildathonPage />} />
-      </Routes>
-    </Router>
-  );
+    <div className="App">
+      <AdminDashboard />
+    </div>
+  )
 }
 
 export default App;

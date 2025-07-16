@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import * as dotenv from "dotenv";
 import path from "path";
 import submissionRoutes from './routes/submissionRoute';
+import adminRouter from "./routes/challenges.routes";
 
 // Load .env file from server directory
 dotenv.config({ path: path.join(__dirname, ".env") });
@@ -15,7 +16,9 @@ app.use(express.json());
 
 //ROutes
 app.use('/api/submissions', submissionRoutes);
+// Routes
 app.get("/", (req, res) => res.send("API Running"));
+app.use("/api/admin", adminRouter);
 
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI;
