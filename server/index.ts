@@ -3,6 +3,7 @@ import cors from "cors";
 import mongoose from "mongoose";
 import * as dotenv from "dotenv";
 import path from "path";
+import adminRouter from "./routes/challenges.routes";
 
 // Load .env file from server directory
 dotenv.config({ path: path.join(__dirname, ".env") });
@@ -12,7 +13,9 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Routes
 app.get("/", (req, res) => res.send("API Running"));
+app.use("/api/admin", adminRouter);
 
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI;
