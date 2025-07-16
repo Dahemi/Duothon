@@ -1,86 +1,64 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
+import {
+  GoogleAuthProvider,
+  signInWithPopup,
+  signOut,
+  onAuthStateChanged,
+  team,
+} from "firebase/auth";
+import { auth } from "../firebase"; // Fix import path
 import API from "../services/api";
 
-interface User {
-  username: string;
-  role: string;
-}
-
-interface AuthContextType {
+interface AuthContextProps {
   user: User | null;
-  login: (username: string, password: string) => Promise<boolean>;
-  logout: () => void;
-  loading: boolean;
+  googleSignIn: () => Promise<void>;
+  logOut: () => Promise<void>;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<AuthContextProps>({} as AuthContextProps);
 
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
-};
-
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+export const AuthContextProvider = ({
   children,
+}: {
+  children: React.ReactNode;
 }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+
+  const googleSignIn = async () => {
+    const provider = new GoogleAuthProvider();
+    try {
+      const result = await signInWithPopup(auth, provider);
+      // Send user data to backend
+      await API.post("/teams/auth/google", {
+        email: result.user.email,
+        teamName: result.user.displayName,
+        authProvider: "google",
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const logOut = async () => {
+    try {
+      await signOut(auth);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-      verifyToken();
-    } else {
-      setLoading(false);
-    }
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+    return () => unsubscribe();
   }, []);
 
-  const verifyToken = async () => {
-    try {
-      const response = await API.get("/auth/verify");
-      if (response.data.success) {
-        setUser(response.data.user);
-      }
-    } catch (error) {
-      localStorage.removeItem("token");
-      delete API.defaults.headers.common["Authorization"];
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const login = async (
-    username: string,
-    password: string
-  ): Promise<boolean> => {
-    try {
-      const response = await API.post("/auth/login", { username, password });
-      if (response.data.success) {
-        const { token, user } = response.data;
-        localStorage.setItem("token", token);
-        API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-        setUser(user);
-        return true;
-      }
-    } catch (error) {
-      console.error("Login failed:", error);
-    }
-    return false;
-  };
-
-  const logout = () => {
-    localStorage.removeItem("token");
-    delete API.defaults.headers.common["Authorization"];
-    setUser(null);
-  };
-
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, googleSignIn, logOut }}>
       {children}
     </AuthContext.Provider>
   );
 };
+
+export const useAuth = () => useContext(AuthContext);
