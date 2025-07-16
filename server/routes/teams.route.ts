@@ -1,23 +1,14 @@
-import express from 'express';
-import { googleAuth } from '../controllers/teams.controller';
-import { authMiddleware } from '../middleware/auth.middleware';
+// server/routes/teams.route.ts
+import express from "express";
+import { googleAuth, getCurrentTeam } from "../controllers/teams.controller";
+import { authenticateFirebase } from "../middleware/authMiddleware";
 
 const router = express.Router();
 
 // Public routes
-router.post('/auth/google', googleAuth);
+router.post("/auth/google", googleAuth);
 
 // Protected routes
-router.get('/current', authMiddleware, async (req: AuthRequest, res: Response) => {
-  try {
-    const team = await Team.findOne({ email: req.user?.email });
-    if (!team) {
-      return res.status(404).json({ message: 'Team not found' });
-    }
-    res.json({ team });
-  } catch (error) {
-    res.status(500).json({ message: 'Server error' });
-  }
-});
+router.get("/current", authenticateFirebase, getCurrentTeam);
 
 export default router;
