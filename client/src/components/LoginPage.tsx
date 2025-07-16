@@ -22,11 +22,6 @@ export const LoginPage: React.FC = () => {
     }
   };
 
-  if (user) {
-    navigate("/dashboard");
-    return null;
-  }
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-black bg-opacity-90 bg-[url('https://source.unsplash.com/random/1920x1080?cyberpunk')] bg-cover bg-center">
       <div className="max-w-md w-full space-y-8 p-8 bg-gray-900 bg-opacity-80 rounded-xl border border-neon-blue shadow-neon">

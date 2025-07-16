@@ -69,5 +69,12 @@ export const AuthContextProvider = ({
     </AuthContext.Provider>
   );
 };
-
-export const useAuth = () => useContext(AuthContext);
+// Removed duplicate export of AuthContext; already exported above using createContext.
+// Add the missing useAuth hook export
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthContextProvider");
+  }
+  return context;
+};

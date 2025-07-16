@@ -1,4 +1,4 @@
-import API from './api';
+import API from "./api";
 
 export interface Challenge {
   _id?: string;
@@ -61,33 +61,62 @@ export const challengeApi = {
   // Get all challenges
   getAllChallenges: async (): Promise<Challenge[]> => {
     try {
-      const response = await API.get<Challenge[]>('/admin/challenges');
+      const response = await API.get<Challenge[]>("/admin/challenges");
       return response.data;
     } catch (error: any) {
-      console.error('Error fetching challenges:', error);
-      throw new Error(error.response?.data?.message || 'Failed to fetch challenges');
+      console.error("Error fetching challenges:", error);
+      throw new Error(
+        error.response?.data?.message || "Failed to fetch challenges"
+      );
+    }
+  },
+  // Get active challenges for teams
+  getActiveChallenges: async (): Promise<Challenge[]> => {
+    try {
+      const response = await API.get<Challenge[]>("/challenges/active");
+      return response.data;
+    } catch (error: any) {
+      console.error("Error fetching active challenges:", error);
+      throw new Error(
+        error.response?.data?.message || "Failed to fetch active challenges"
+      );
     }
   },
 
   // Create a new challenge
-  createChallenge: async (challengeData: CreateChallengeRequest): Promise<Challenge> => {
+  createChallenge: async (
+    challengeData: CreateChallengeRequest
+  ): Promise<Challenge> => {
     try {
-      const response = await API.post<ApiResponse<Challenge>>('/admin/challenges', challengeData);
+      const response = await API.post<ApiResponse<Challenge>>(
+        "/admin/challenges",
+        challengeData
+      );
       return response.data.challenge!;
     } catch (error: any) {
-      console.error('Error creating challenge:', error);
-      throw new Error(error.response?.data?.message || 'Failed to create challenge');
+      console.error("Error creating challenge:", error);
+      throw new Error(
+        error.response?.data?.message || "Failed to create challenge"
+      );
     }
   },
 
   // Update an existing challenge
-  updateChallenge: async (id: string, challengeData: CreateChallengeRequest): Promise<Challenge> => {
+  updateChallenge: async (
+    id: string,
+    challengeData: CreateChallengeRequest
+  ): Promise<Challenge> => {
     try {
-      const response = await API.put<ApiResponse<Challenge>>(`/admin/challenges/${id}`, challengeData);
+      const response = await API.put<ApiResponse<Challenge>>(
+        `/admin/challenges/${id}`,
+        challengeData
+      );
       return response.data.challenge!;
     } catch (error: any) {
-      console.error('Error updating challenge:', error);
-      throw new Error(error.response?.data?.message || 'Failed to update challenge');
+      console.error("Error updating challenge:", error);
+      throw new Error(
+        error.response?.data?.message || "Failed to update challenge"
+      );
     }
   },
 
@@ -96,10 +125,12 @@ export const challengeApi = {
     try {
       await API.delete<ApiResponse<Challenge>>(`/admin/challenges/${id}`);
     } catch (error: any) {
-      console.error('Error deleting challenge:', error);
-      throw new Error(error.response?.data?.message || 'Failed to delete challenge');
+      console.error("Error deleting challenge:", error);
+      throw new Error(
+        error.response?.data?.message || "Failed to delete challenge"
+      );
     }
-  }
+  },
 };
 
 export default challengeApi;

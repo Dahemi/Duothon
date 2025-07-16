@@ -8,7 +8,8 @@ import authRoutes from "./routes/auth.routes";
 import teamsRoutes from "./routes/teams.route";
 import adminRoutes from "./routes/admin.routes";
 import submissionRoutes from "./routes/submissionRoute";
-import adminRouter from "./routes/challenges.routes";
+import challengesRoutes from "./routes/challenges.routes";
+import adminChallengesRoutes from "./routes/admin-challenges.routes";
 
 // Load .env file from server directory
 dotenv.config();
@@ -36,16 +37,14 @@ admin.initializeApp({
 app.use(cors());
 app.use(express.json());
 
-//ROutes
-app.use("/api/submissions", submissionRoutes);
 // Routes
 app.get("/", (req, res) => res.send("API Running"));
-app.use("/api/admin", adminRouter);
-
-// Routes
+app.use("/api/submissions", submissionRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/teams", teamsRoutes);
-app.use("/api/admin", adminRoutes);
+app.use("/api/challenges", challengesRoutes); // Public challenge routes
+app.use("/api/admin/challenges", adminChallengesRoutes); // Admin challenge management
+app.use("/api/admin", adminRoutes); // Keep this last to avoid conflicts
 
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI;

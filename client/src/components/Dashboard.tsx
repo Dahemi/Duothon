@@ -1,6 +1,6 @@
-// client/src/component/Dashboard.tsx
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 import API from "../services/api";
 
 interface Team {
@@ -13,43 +13,41 @@ interface Team {
   buildathonSubmissions: any[];
 }
 
-export const Dashboard: React.FC = () => {
-  const { user, logOut } = useAuth();
+const Dashboard: React.FC = () => {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const [team, setTeam] = useState<Team | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+
     const fetchTeamData = async () => {
       try {
-        const response = await API.get("/teams/current");
-        setTeam(response.data.team);
+        const response = await API.get("/teams/me");
+        setTeam(response.data);
       } catch (error) {
         console.error("Error fetching team data:", error);
       } finally {
-        setLoading(false);
+        setIsLoading(false);
       }
     };
 
-    if (user) {
-      fetchTeamData();
-    }
-  }, [user]);
+    fetchTeamData();
+  }, [user, navigate]);
 
-  const handleLogout = async () => {
-    try {
-      await logOut();
-    } catch (error) {
-      console.error("Error logging out:", error);
-    }
+  const handleLogout = () => {
+    logout();
+    navigate("/");
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading dashboard...</p>
-        </div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
       </div>
     );
   }
@@ -65,12 +63,15 @@ export const Dashboard: React.FC = () => {
               </h1>
             </div>
             <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-700">
-                Welcome, {user?.displayName}
-              </span>
+              <button
+                onClick={() => navigate("/challenge")}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                Challenge Portal
+              </button>
               <button
                 onClick={handleLogout}
-                className="bg-red-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-red-700"
+                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
               >
                 Logout
               </button>
@@ -81,13 +82,31 @@ export const Dashboard: React.FC = () => {
 
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
-          <div className="bg-white overflow-hidden shadow rounded-lg">
-            <div className="px-4 py-5 sm:p-6">
-              <h3 className="text-lg leading-6 font-medium text-gray-900">
-                Team Information
-              </h3>
-              {team && (
-                <div className="mt-5 space-y-4">
+          <div className="border-4 border-dashed border-gray-200 rounded-lg p-8">
+            <div className="text-center">
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                Welcome, {user?.teamName}!
+              </h2>
+              <p className="text-gray-600 mb-8">
+                Ready to take on the coding challenge?
+              </p>
+
+              <div className="space-y-4">
+                <button
+                  onClick={() => navigate("/challenge")}
+                  className="w-full sm:w-auto px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-lg font-medium"
+                >
+                  Start Challenge
+                </button>
+              </div>
+            </div>
+
+            {team && (
+              <div className="mt-8 bg-white rounded-lg shadow p-6">
+                <h3 className="text-lg font-medium text-gray-900 mb-4">
+                  Team Information
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700">
                       Team Name
@@ -119,11 +138,13 @@ export const Dashboard: React.FC = () => {
                     </p>
                   </div>
                 </div>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         </div>
       </main>
     </div>
   );
 };
+
+export default Dashboard;

@@ -24,7 +24,7 @@ export const SignUp: React.FC<SignUpProps> = () => {
 
     try {
       await googleSignIn(teamName);
-      navigate("/dashboard");
+      navigate("/challenge");
     } catch (error: any) {
       setError(error.message || "Failed to sign up");
     } finally {
@@ -34,7 +34,6 @@ export const SignUp: React.FC<SignUpProps> = () => {
 
   if (user) {
     navigate("/dashboard");
-    return null;
   }
 
   return (
