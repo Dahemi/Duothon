@@ -3,7 +3,7 @@ import cors from "cors";
 import mongoose from "mongoose";
 import * as dotenv from "dotenv";
 import path from "path";
-import teamsRoutes from "./routes/teams.route";
+import authRoutes from "./routes/auth.routes";
 
 // Load .env file from server directory
 dotenv.config({ path: path.join(__dirname, ".env") });
@@ -16,7 +16,8 @@ app.use(express.json());
 app.get("/", (req, res) => res.send("API Running"));
 
 // Routes
-app.use("/api/teams", teamsRoutes);
+//app.use("/api/teams", teamsRoutes);
+app.use("/api/auth", authRoutes);
 
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI;
